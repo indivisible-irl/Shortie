@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends Activity implements View.OnClickListener{
 	
@@ -41,16 +42,27 @@ public class MainActivity extends Activity implements View.OnClickListener{
 	public void onClick(View v) {
 		switch (v.getId()){
 		case R.id.b_clear:
+			actionClear();
 			Log.i("button", "Clear");
 			break;
 		case R.id.b_copy:
 			Log.i("button", "Copy");
 			break;
 		case R.id.b_generate:
+			actionGenerate();
 			Log.i("button", "Generate");
 			break;
 		}
 		Log.d("finished", "Main.onClick()");
-		
+	}
+	
+	private void actionClear(){
+		etUrlIn.setText("");
+		etUrlOut.setText("");
+	}
+	private void actionGenerate(){
+		String urlIn = etUrlIn.getText().toString();
+		Toast toast = Toast.makeText(getApplicationContext(), urlIn, Toast.LENGTH_SHORT);
+		toast.show();
 	}
 }
