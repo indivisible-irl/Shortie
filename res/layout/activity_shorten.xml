@@ -9,11 +9,6 @@
     android:orientation="vertical"
     tools:context="com.indivisible.shortie.ShortenActivity$PlaceholderFragment" >
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Title bit:" />
     <TextView 
         android:id="@+id/tvResult"
         android:layout_width="match_parent"
@@ -26,11 +21,11 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="textUri"
-        android:hint="Enter a URL"/>
+        android:hint="@string/et_longurl_hint"/>
     <Button 
         android:id="@+id/bMakeShort"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Shorten"/>
+        android:text="@string/b_shorten"/>
 
 </LinearLayout>

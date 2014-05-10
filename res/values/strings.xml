@@ -2,17 +2,8 @@
 <resources>
 
     <string name="app_name">Shortie</string>
-    <string name="menu_settings">Settings</string>
-    <string name="intro">Intro and explanation text</string>
-    <string name="url_in_et">Enter URL here</string>
-    <string name="url_in_label">Long URL</string>
-    <string name="url_out_et">Shortie appears here</string>
-    <string name="url_out_label">Shortened URL</string>
-    <string name="b_clear">Clear</string>
-    <string name="b_copy">Copy</string>
-    <string name="b_gen">Generate</string>
-    <string name="title_activity_shorten">ShortenActivity</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    
+    <string name="et_longurl_hint">Enter long URL here</string>
+    <string name="b_shorten">Shorten</string>
 
 </resources>
