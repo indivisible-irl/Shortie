@@ -40,7 +40,7 @@ public class GoogleShortener
     ////    public methods
     ///////////////////////////////////////////////////////
 
-    public static String requestUrl(String longUrl)
+    public String requestUrl(String longUrl)
     {
         try
         {
