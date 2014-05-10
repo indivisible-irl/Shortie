@@ -29,7 +29,7 @@ public class GoogleShortener
 
     private final static String CONTENT_TYPE = "application/json";
     private final static String KEY_APIKEY = "key";
-    private final static String KEY_KIND = "kind";
+    //private final static String KEY_KIND = "kind";
     private final static String KEY_SHORTURL = "id";
     private final static String KEY_LONGURL = "longUrl";
 

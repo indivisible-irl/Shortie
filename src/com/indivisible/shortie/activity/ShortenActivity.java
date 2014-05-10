@@ -10,8 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.indivisible.shortie.R;
-import com.indivisible.shortie.R.id;
-import com.indivisible.shortie.R.layout;
 import com.indivisible.shortie.service.GoogleShortener;
 import com.indivisible.shortie.service.Shortener;
 
