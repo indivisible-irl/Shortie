@@ -12,10 +12,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import android.util.Log;
 
 public class GoogleShortener
@@ -28,11 +26,14 @@ public class GoogleShortener
 
     private final static String GOOGLE_URL = "https://www.googleapis.com/urlshortener/v1/url";
     private final static String API_KEY = "AIzaSyAWCd8ONumLwxv0RqthcHXjcD1OlhXgrlE";
-    private final static String KEY_APIKEY = "key";
-    private final static String KEY_LONGURL = "longUrl";
-    private final static String CONTENT_TYPE = "application/json";
 
-    //private static final String SHORTENER_TITLE = "Google";
+    private final static String CONTENT_TYPE = "application/json";
+    private final static String KEY_APIKEY = "key";
+    private final static String KEY_KIND = "kind";
+    private final static String KEY_SHORTURL = "id";
+    private final static String KEY_LONGURL = "longUrl";
+
+    private static final String TITLE = "Google";
     private static final String TAG = "googleUrl";
 
 
@@ -60,6 +61,11 @@ public class GoogleShortener
         }
 
         return null;
+    }
+
+    public String getTitle()
+    {
+        return GoogleShortener.TITLE;
     }
 
     ///////////////////////////////////////////////////////
@@ -125,9 +131,8 @@ public class GoogleShortener
                 {
                     sb.append(line).append("\n");
                 }
-                JSONTokener tokener = new JSONTokener(sb.toString());
-                JSONArray jsonResponse = new JSONArray(tokener);
-                return jsonResponse.toString();
+                JSONObject jsonResponse = new JSONObject(sb.toString());
+                return jsonResponse.getString(KEY_SHORTURL);
             }
             catch (UnsupportedEncodingException e)
             {
