@@ -1,4 +1,4 @@
-package com.indivisible.shortie;
+package com.indivisible.shortie.activity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,8 +9,11 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.indivisible.shortie.shorts.GoogleShortener;
-import com.indivisible.shortie.shorts.Shortener;
+import com.indivisible.shortie.R;
+import com.indivisible.shortie.R.id;
+import com.indivisible.shortie.R.layout;
+import com.indivisible.shortie.service.GoogleShortener;
+import com.indivisible.shortie.service.Shortener;
 
 /**
  * Activity to manage the shortening of links.

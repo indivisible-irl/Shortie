@@ -1,4 +1,4 @@
-package com.indivisible.shortie.shorts;
+package com.indivisible.shortie.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
