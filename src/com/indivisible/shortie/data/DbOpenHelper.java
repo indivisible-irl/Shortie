@@ -14,7 +14,7 @@ public class DbOpenHelper
     ////    data
     ///////////////////////////////////////////////////////
 
-    private static final String DB_NAME = "shortie.db";
+    private static final String DB_NAME = "shortie_links.db";
     private static final int DB_VERSION = 1;
 
     public static final String TABLE_PAIRS = "link_pairs";
@@ -23,20 +23,20 @@ public class DbOpenHelper
     public static final String COL_SHORTURL = "url_short";
     public static final String COL_DATETIME = "datetime_created";
     public static final String[] ALL_COLUMNS = new String[] {
-            DbOpenHelper.COL_KEY, DbOpenHelper.COL_DATETIME, DbOpenHelper.COL_SHORTURL,
-            DbOpenHelper.COL_LONGURL
+            DbOpenHelper.COL_KEY, DbOpenHelper.COL_DATETIME, DbOpenHelper.COL_LONGURL,
+            DbOpenHelper.COL_SHORTURL
     };
 
     private static final String CREATE_TABLE_PAIRS = "create table " + TABLE_PAIRS + "("
             + COL_KEY + " integer primary key autoincrement, " + COL_DATETIME
-            + " integer not null, " + COL_SHORTURL + " text not null, " + COL_LONGURL
+            + " BIGINT not null, " + COL_SHORTURL + " text not null, " + COL_LONGURL
             + " text not null " + ");";
     private static final String DROP_TABLE_PAIRS = "drop table if exists " + TABLE_PAIRS;
 
     private static final String TAG = "dbHandler";
 
     ///////////////////////////////////////////////////////
-    ////    constructors
+    ////    init
     ///////////////////////////////////////////////////////
 
     public DbOpenHelper(Context context)

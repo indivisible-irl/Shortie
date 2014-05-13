@@ -1,38 +1,30 @@
 package com.indivisible.shortie.activity;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 import com.indivisible.shortie.R;
-import com.indivisible.shortie.service.GoogleShortener;
-import com.indivisible.shortie.service.Shortener;
+import com.indivisible.shortie.R.id;
+import com.indivisible.shortie.R.layout;
+import com.indivisible.shortie.R.menu;
+import com.indivisible.shortie.data.LinkPair;
+import com.indivisible.shortie.fragment.LinkInputFragment.OnInputListener;
+import com.indivisible.shortie.fragment.LinkPairListFragment;
+import com.indivisible.shortie.fragment.LinkPairListFragment.OnLinkPairClickListener;
 
-/**
- * Activity to manage the shortening of links.
- * 
- * @author indiv
- */
 public class ShortenActivity
         extends ActionBarActivity
-        implements OnClickListener
+        implements OnInputListener, OnLinkPairClickListener
 {
 
     ///////////////////////////////////////////////////////
     ////    data
     ///////////////////////////////////////////////////////
 
-    //private ListView lvPreviousLinks;
-    private EditText etLongUrl;
-    private TextView tvResult;
-    private Button bShorten;
-
-    private String TAG = "ShortenAct";
+    private LinkPairListFragment listFragment;
+    private static final String TAG = "ShortenActivity";
 
 
     ///////////////////////////////////////////////////////
@@ -44,82 +36,72 @@ public class ShortenActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shorten);
-        initViews();
-    }
-
-    private void initViews()
-    {
-        etLongUrl = (EditText) findViewById(R.id.etLongUrl);
-        tvResult = (TextView) findViewById(R.id.tvResult);
-        bShorten = (Button) findViewById(R.id.bMakeShort);
-        bShorten.setOnClickListener(this);
+        listFragment = (LinkPairListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.frLinksList);
     }
 
 
     ///////////////////////////////////////////////////////
-    ////    click handling
+    ////    fragments
+    ///////////////////////////////////////////////////////
+
+    // From LinkInputFragment
+    @Override
+    public void onShortenSubmit(String longUrl)
+    {
+        //Toast.makeText(this, "Valid URL: " + longUrl, Toast.LENGTH_SHORT).show();
+        long now = System.currentTimeMillis();
+        //Toast.makeText(this, "now: " + now, Toast.LENGTH_SHORT).show();
+        LinkPair newLinkPair = new LinkPair();
+        newLinkPair.setCreatedMillis(now);
+        newLinkPair.setLongUrl(longUrl);
+        newLinkPair.setShortUrl("TEMP SHORT");
+        listFragment.addLinkPair(newLinkPair);
+    }
+
+    // From LinkPairListFragment
+    @Override
+    public void onLinkShortClick(LinkPair linkPair)
+    {
+        Toast.makeText(this,
+                       "LinkPair clicked, id: " + linkPair.getId(),
+                       Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLinkLongClick(LinkPair linkPair)
+    {
+        Toast.makeText(this,
+                       "LinkPair long clicked, id: " + linkPair.getId(),
+                       Toast.LENGTH_SHORT).show();
+    }
+
+
+    ///////////////////////////////////////////////////////
+    ////    options
     ///////////////////////////////////////////////////////
 
     @Override
-    public void onClick(View v)
+    public boolean onCreateOptionsMenu(Menu menu)
     {
-        switch (v.getId())
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.shorten, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings)
         {
-            case R.id.bMakeShort:
-                Log.v(TAG, "ButtonPress: Shorten");
-                shortenLink();
-                break;
-            default:
-                Log.w(TAG, "Unhandled button press");
-                break;
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
 
-    ///////////////////////////////////////////////////////
-    ////    methods
-    ///////////////////////////////////////////////////////
-
-    private void shortenLink()
-    {
-        String longUrl = etLongUrl.getText().toString();
-        new ShortenTask().execute(longUrl);
-    }
-
-
-    ///////////////////////////////////////////////////////
-    ////    shorten task
-    ///////////////////////////////////////////////////////
-
-    private class ShortenTask
-            extends AsyncTask<String, Void, String>
-    {
-
-        @Override
-        protected void onPreExecute()
-        {
-            Log.d(TAG, "Starting link shortening...");
-        }
-
-        @Override
-        protected String doInBackground(String... params)
-        {
-            Shortener shortener = new GoogleShortener();
-            return shortener.requestUrl(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result)
-        {
-            tvResult.setText(result);
-        }
-
-        @Override
-        protected void onCancelled()
-        {
-            Log.d(TAG, "Cancelled shortening.");
-        }
-
-
-    }
 }

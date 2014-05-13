@@ -1,5 +1,8 @@
 package com.indivisible.shortie.data;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 /**
  * Class to hold details for a shortened link.
@@ -14,9 +17,15 @@ public class LinkPair
     ///////////////////////////////////////////////////////
 
     private long id = -1;
-    private int createdMillis = -1;
+    private long createdMillis = -1;
     private String longUrl = "NONE";
     private String shortUrl = "NONE";
+
+    private static final String FORMAT_DATE_ISO = "yyyy-MM-dd HH:mm";
+    private static final String FORMAT_DATE_US = "MMMMM-dd-yyyy HH:mm";
+    private static final String FORMAT_DATE_EU = "dd-MMMMM-yyyy HH:mm";
+
+    //TODO: Get user's time format preference
 
 
     ///////////////////////////////////////////////////////
@@ -26,12 +35,17 @@ public class LinkPair
     public LinkPair()
     {}
 
-    public LinkPair(long id, int createdMillis, String longUrl, String shortUrl)
+    public LinkPair(long createdMillis, String longUrl, String shortUrl)
     {
-        this.id = id;
         this.createdMillis = createdMillis;
         this.longUrl = longUrl;
         this.shortUrl = shortUrl;
+    }
+
+    public LinkPair(long id, long createdMillis, String longUrl, String shortUrl)
+    {
+        this(createdMillis, longUrl, shortUrl);
+        this.id = id;
     }
 
 
@@ -49,12 +63,12 @@ public class LinkPair
         this.id = id;
     }
 
-    public int getCreatedMillis()
+    public long getCreatedMillis()
     {
         return this.createdMillis;
     }
 
-    public void setCreatedMillis(int createdMillis)
+    public void setCreatedMillis(long createdMillis)
     {
         this.createdMillis = createdMillis;
     }
@@ -76,6 +90,59 @@ public class LinkPair
 
     public void setShortUrl(String shortUrl)
     {
-        this.shortUrl = shortUrl;
+        if (shortUrl != null) this.shortUrl = shortUrl;
     }
+
+
+    ///////////////////////////////////////////////////////
+    ////    methods
+    ///////////////////////////////////////////////////////
+
+    public Date getCreatedDate()
+    {
+        return new Date(this.createdMillis);
+    }
+
+    public String getPrintableDate()
+    {
+        Date created = getCreatedDate();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(FORMAT_DATE_EU);
+        return dateFormat.format(created);
+    }
+
+    public String getPrintableAge()
+    {
+        long now = System.currentTimeMillis();
+        long diff = now - createdMillis;
+        return "TODO: get Joda";
+    }
+
+    ///////////////////////////////////////////////////////
+    ////    overrides
+    ///////////////////////////////////////////////////////
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o instanceof LinkPair)
+        {
+            LinkPair linkPair = (LinkPair) o;
+            return (this.getId() - linkPair.getId()) == 0;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return ((Long) this.getId()).hashCode();
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("%2d: %s", this.getId(), this.getLongUrl());
+    }
+
+
 }

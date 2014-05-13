@@ -3,15 +3,16 @@
 
     <!-- application -->
     <string name="app_name">Shortie</string>
-    
+    <string name="action_settings">Settings</string>
+
     <!-- input -->
     <string name="et_longurl_hint">Enter long URL here</string>
     <string name="b_shorten">Shorten</string>
-    
+
     <!-- empty list -->
     <string name="tvEmptyTitle">No Saved Links</string>
     <string name="tvEmptyExplanation">To get started, convert some links.</string>
-    
+
     <!-- listview -->
     <string name="tvLinkLongUrl">[Expanded URL here]</string>
     <string name="tvLinkShortUrl">[Short URL here]</string>

@@ -86,13 +86,12 @@ public class LinkDataSource
      * @param longUrl
      * @return
      */
-    public LinkPair createLinkPair(int createMillis, String shortUrl, String longUrl)
+    public LinkPair createLinkPair(long createdMillis, String shortUrl, String longUrl)
     {
         ContentValues values = new ContentValues();
-        values.put(DbOpenHelper.COL_DATETIME, createMillis);
-        values.put(DbOpenHelper.COL_SHORTURL, shortUrl);
+        values.put(DbOpenHelper.COL_DATETIME, createdMillis);
         values.put(DbOpenHelper.COL_LONGURL, longUrl);
-
+        values.put(DbOpenHelper.COL_SHORTURL, shortUrl);
         long pairId = db.insert(DbOpenHelper.TABLE_PAIRS, null, values);
         return getLinkPairById(pairId);
     }
@@ -152,10 +151,13 @@ public class LinkDataSource
                               null,
                               null,
                               DbOpenHelper.COL_DATETIME);
-            while (!cursor.isAfterLast())
+            if (cursor.moveToFirst())
             {
-                linkPairs.add(CursorToLinkPair(cursor));
-                cursor.moveToNext();
+                while (!cursor.isAfterLast())
+                {
+                    linkPairs.add(CursorToLinkPair(cursor));
+                    cursor.moveToNext();
+                }
             }
             return linkPairs;
         }
@@ -212,9 +214,9 @@ public class LinkDataSource
     {
         LinkPair linkPair = new LinkPair();
         linkPair.setId(cursor.getLong(0));
-        linkPair.setCreatedMillis(cursor.getInt(1));
-        linkPair.setShortUrl(cursor.getString(2));
-        linkPair.setLongUrl(cursor.getString(3));
+        linkPair.setCreatedMillis(cursor.getLong(1));
+        linkPair.setLongUrl(cursor.getString(2));
+        linkPair.setShortUrl(cursor.getString(3));
         return linkPair;
     }
 
