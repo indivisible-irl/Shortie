@@ -1,9 +1,5 @@
 package com.indivisible.shortie.fragment;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,10 +10,15 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 import com.indivisible.shortie.R;
 
 
+/**
+ * Fragment containing an EditText and Button for submitting/editing URLs
+ * manually.
+ * 
+ * @author indiv
+ */
 public class LinkInputFragment
         extends Fragment
         implements OnClickListener
@@ -31,7 +32,7 @@ public class LinkInputFragment
     private Button bShorten;
     private OnInputListener inputListener;
 
-    private static final String TAG = "LinkInputFrag";
+    private static final String TAG = "sho:LinkInputFrag";
 
 
     ///////////////////////////////////////////////////////
@@ -77,9 +78,19 @@ public class LinkInputFragment
     ////    input
     ///////////////////////////////////////////////////////
 
+    /**
+     * Listener for LinkInputFragment submissions.
+     * 
+     * @author indiv
+     */
     public interface OnInputListener
     {
 
+        /**
+         * Call on Submit button press to pass EditText's text.
+         * 
+         * @param urlLong
+         */
         public void onShortenSubmit(String urlLong);
     }
 
@@ -90,54 +101,44 @@ public class LinkInputFragment
         switch (v.getId())
         {
             case R.id.bShorten:
-                String longUrlString = etLongUrl.getText().toString();
-                String longUrl = validateUrl();
-                if (longUrl != null)
-                {
-                    inputListener.onShortenSubmit(longUrl);
-                }
-                else
-                {
-                    Toast.makeText(getActivity(),
-                                   "Invalid URL: " + longUrlString,
-                                   Toast.LENGTH_SHORT).show();
-                }
+                String longUrl = etLongUrl.getText().toString();
+                Log.v(TAG, "bShorten: " + longUrl);
+                inputListener.onShortenSubmit(longUrl);
                 break;
             default:
                 break;
         }
     }
 
-    public String validateUrl()
-    {
-        //TODO: Move validation to clipboard listener, allow any manual string. let shortener service decide.
-        //UrlValidator urlValidator = new UrlValidator();
-        String inputUrl = etLongUrl.getText().toString().trim();
-        URL url = null;
-        try
-        {
-            url = new URL(inputUrl);
-        }
-        catch (MalformedURLException e)
-        {
-            Log.w(TAG, "Failed to make URL");
-            e.printStackTrace();
-            return null;
-        }
-        URI uri = null;
-        try
-        {
-            uri = url.toURI();
-            return uri.toString();
-        }
-        catch (URISyntaxException e)
-        {
-            Log.w(TAG, "Failed to make URI");
-            e.printStackTrace();
-            return null;
-        }
-        //TODO: don't validate, just test connection and create short (two threads)
-        //  inform on no connect, fail on no short.
-    }
+    //    public String validateUrl()
+    //    {
+    //        //TODO: Move validation to clipboard listener, allow any manual string. let shortener service decide.
+    //        String inputUrl = etLongUrl.getText().toString().trim();
+    //        URL url = null;
+    //        try
+    //        {
+    //            url = new URL(inputUrl);
+    //        }
+    //        catch (MalformedURLException e)
+    //        {
+    //            Log.w(TAG, "Failed to make URL");
+    //            e.printStackTrace();
+    //            return null;
+    //        }
+    //        URI uri = null;
+    //        try
+    //        {
+    //            uri = url.toURI();
+    //            return uri.toString();
+    //        }
+    //        catch (URISyntaxException e)
+    //        {
+    //            Log.w(TAG, "Failed to make URI");
+    //            e.printStackTrace();
+    //            return null;
+    //        }
+    //        //TODO: don't validate, just test connection and create short (two background threads)
+    //        //  inform on no connect, fail on no short.
+    //    }
 
 }

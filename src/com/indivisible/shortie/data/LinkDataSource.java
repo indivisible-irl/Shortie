@@ -7,6 +7,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+import com.indivisible.shortie.service.ResponseStatus;
 
 /**
  * Bridge between database and LinkPair objects.
@@ -23,6 +25,8 @@ public class LinkDataSource
     private Context context;
     private SQLiteDatabase db = null;
     private DbOpenHelper dbHelper = null;
+
+    private static final String TAG = "sho:LinkDataSrc";
 
 
     ///////////////////////////////////////////////////////
@@ -45,7 +49,8 @@ public class LinkDataSource
      * 
      * @throws SQLException
      */
-    public void openReadable() throws SQLException
+    public void openReadable()
+        throws SQLException
     {
         db = dbHelper.getReadableDatabase();
     }
@@ -55,7 +60,8 @@ public class LinkDataSource
      * 
      * @throws SQLException
      */
-    public void openWritable() throws SQLException
+    public void openWritable()
+        throws SQLException
     {
         db = dbHelper.getWritableDatabase();
     }
@@ -86,14 +92,21 @@ public class LinkDataSource
      * @param longUrl
      * @return
      */
-    public LinkPair createLinkPair(long createdMillis, String shortUrl, String longUrl)
+    public LinkPair createLinkPair(long createdMillis,
+                                   String shortUrl,
+                                   String longUrl,
+                                   ResponseStatus status)
     {
         ContentValues values = new ContentValues();
         values.put(DbOpenHelper.COL_DATETIME, createdMillis);
         values.put(DbOpenHelper.COL_LONGURL, longUrl);
         values.put(DbOpenHelper.COL_SHORTURL, shortUrl);
+        values.put(DbOpenHelper.COL_STATUS, status.name());
         long pairId = db.insert(DbOpenHelper.TABLE_PAIRS, null, values);
-        return getLinkPairById(pairId);
+        LinkPair newLinkPair = getLinkPairById(pairId);
+        Log.v(TAG, "Added new LinkPair, id: " + pairId);
+        Log.v(TAG, "long: " + newLinkPair.getLongUrl());
+        return newLinkPair;
     }
 
 
@@ -170,7 +183,6 @@ public class LinkDataSource
         }
     }
 
-
     // delete
 
     /**
@@ -199,6 +211,8 @@ public class LinkDataSource
         }
     }
 
+    //TODO: UpdateLinkPair()
+
 
     ///////////////////////////////////////////////////////
     ////    util methods
@@ -212,11 +226,12 @@ public class LinkDataSource
      */
     private static LinkPair CursorToLinkPair(Cursor cursor)
     {
-        LinkPair linkPair = new LinkPair();
-        linkPair.setId(cursor.getLong(0));
-        linkPair.setCreatedMillis(cursor.getLong(1));
-        linkPair.setLongUrl(cursor.getString(2));
-        linkPair.setShortUrl(cursor.getString(3));
+        LinkPair linkPair = new LinkPair(cursor.getLong(0),      // id
+                cursor.getLong(1),      // created
+                cursor.getString(2),    // long
+                cursor.getString(3),    // short
+                ResponseStatus.getStatus(cursor.getString(4))   // status
+        );
         return linkPair;
     }
 

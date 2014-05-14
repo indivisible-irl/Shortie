@@ -2,6 +2,8 @@ package com.indivisible.shortie.data;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import com.indivisible.shortie.service.ResponseStatus;
 
 
 /**
@@ -16,16 +18,18 @@ public class LinkPair
     ////    data
     ///////////////////////////////////////////////////////
 
+    //TODO: store shortener service
     private long id = -1;
     private long createdMillis = -1;
-    private String longUrl = "NONE";
-    private String shortUrl = "NONE";
-
-    private static final String FORMAT_DATE_ISO = "yyyy-MM-dd HH:mm";
-    private static final String FORMAT_DATE_US = "MMMMM-dd-yyyy HH:mm";
-    private static final String FORMAT_DATE_EU = "dd-MMMMM-yyyy HH:mm";
+    private String longUrl = DEFAULT_URL;
+    private String shortUrl = DEFAULT_URL;
+    private ResponseStatus status;
 
     //TODO: Get user's time format preference
+    //private static final String FORMAT_DATE_ISO = "yyyy-MM-dd HH:mm";
+    //private static final String FORMAT_DATE_US = "MMMMM dd yyyy HH:mm";
+    private static final String FORMAT_DATE_EU = "dd MMM yyyy HH:mm";
+    public static final String DEFAULT_URL = "NONE";
 
 
     ///////////////////////////////////////////////////////
@@ -35,16 +39,24 @@ public class LinkPair
     public LinkPair()
     {}
 
-    public LinkPair(long createdMillis, String longUrl, String shortUrl)
+    public LinkPair(long createdMillis, String longUrl, ResponseStatus status)
     {
         this.createdMillis = createdMillis;
         this.longUrl = longUrl;
+        this.status = status;
+    }
+
+    public LinkPair(long createdMillis, String longUrl, String shortUrl,
+            ResponseStatus status)
+    {
+        this(createdMillis, longUrl, status);
         this.shortUrl = shortUrl;
     }
 
-    public LinkPair(long id, long createdMillis, String longUrl, String shortUrl)
+    public LinkPair(long id, long createdMillis, String longUrl, String shortUrl,
+            ResponseStatus status)
     {
-        this(createdMillis, longUrl, shortUrl);
+        this(createdMillis, longUrl, shortUrl, status);
         this.id = id;
     }
 
@@ -93,6 +105,16 @@ public class LinkPair
         if (shortUrl != null) this.shortUrl = shortUrl;
     }
 
+    public ResponseStatus getStatus()
+    {
+        return status;
+    }
+
+    public void setStatus(ResponseStatus status)
+    {
+        this.status = status;
+    }
+
 
     ///////////////////////////////////////////////////////
     ////    methods
@@ -106,15 +128,24 @@ public class LinkPair
     public String getPrintableDate()
     {
         Date created = getCreatedDate();
-        SimpleDateFormat dateFormat = new SimpleDateFormat(FORMAT_DATE_EU);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(FORMAT_DATE_EU, Locale.US);
         return dateFormat.format(created);
     }
 
     public String getPrintableAge()
     {
-        long now = System.currentTimeMillis();
-        long diff = now - createdMillis;
+        //long now = System.currentTimeMillis();
+        //long diff = now - createdMillis;
         return "TODO: get Joda";
+    }
+
+    public String getStatusOrShortUrl()
+    {
+        if (this.shortUrl.equals(DEFAULT_URL))
+        {
+            return ResponseStatus.getString(status);
+        }
+        return this.shortUrl;
     }
 
     ///////////////////////////////////////////////////////
@@ -141,7 +172,11 @@ public class LinkPair
     @Override
     public String toString()
     {
-        return String.format("%2d: %s", this.getId(), this.getLongUrl());
+        return String.format(Locale.US,
+                             "%2d: %s|%s",
+                             this.getId(),
+                             this.getLongUrl(),
+                             this.getShortUrl());
     }
 
 

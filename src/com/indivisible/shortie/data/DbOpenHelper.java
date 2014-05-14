@@ -15,25 +15,26 @@ public class DbOpenHelper
     ///////////////////////////////////////////////////////
 
     private static final String DB_NAME = "shortie_links.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 5;
 
     public static final String TABLE_PAIRS = "link_pairs";
     public static final String COL_KEY = "_id";
     public static final String COL_LONGURL = "url_long";
     public static final String COL_SHORTURL = "url_short";
     public static final String COL_DATETIME = "datetime_created";
+    public static final String COL_STATUS = "request_status";
     public static final String[] ALL_COLUMNS = new String[] {
             DbOpenHelper.COL_KEY, DbOpenHelper.COL_DATETIME, DbOpenHelper.COL_LONGURL,
-            DbOpenHelper.COL_SHORTURL
+            DbOpenHelper.COL_SHORTURL, DbOpenHelper.COL_STATUS
     };
 
     private static final String CREATE_TABLE_PAIRS = "create table " + TABLE_PAIRS + "("
             + COL_KEY + " integer primary key autoincrement, " + COL_DATETIME
             + " BIGINT not null, " + COL_SHORTURL + " text not null, " + COL_LONGURL
-            + " text not null " + ");";
+            + " text not null, " + COL_STATUS + " text not null" + ");";
     private static final String DROP_TABLE_PAIRS = "drop table if exists " + TABLE_PAIRS;
 
-    private static final String TAG = "dbHandler";
+    private static final String TAG = "sho:DbOpenHelper";
 
     ///////////////////////////////////////////////////////
     ////    init

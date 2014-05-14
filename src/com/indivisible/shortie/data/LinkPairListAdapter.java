@@ -18,7 +18,7 @@ public class LinkPairListAdapter
     private Context context;
     private List<LinkPair> linkPairs;
 
-    private static final String TAG = "LinkPairAdapter";
+    private static final String TAG = "sho:LinkPairAdapter";
 
     public LinkPairListAdapter(Context context, List<LinkPair> linkPairList)
     {
@@ -33,16 +33,25 @@ public class LinkPairListAdapter
     {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         View rowView = inflater.inflate(R.layout.row_linkpair, parent, false);
         TextView tvLongUrl = (TextView) rowView.findViewById(R.id.tvLinkLongUrl);
         TextView tvShortUrl = (TextView) rowView.findViewById(R.id.tvLinkShortUrl);
         TextView tvDate = (TextView) rowView.findViewById(R.id.tvLinkDate);
 
         LinkPair linkPair = linkPairs.get(position);
+        //        if (linkPair == null)
+        //        {
+        //            Log.d(TAG, "linkPair null, pos: " + position);
+        //        }
+        //        Log.v(TAG, "id:     " + linkPair.getId());
+        //        Log.v(TAG, "create: " + linkPair.getCreatedMillis());
+        //        Log.v(TAG, "status: " + linkPair.getStatus().name());
+        //        Log.v(TAG, "long:   " + linkPair.getLongUrl());
+        //        Log.v(TAG, "short:  " + linkPair.getShortUrl());
         tvLongUrl.setText(linkPair.getLongUrl());
         //FIXME: revert back to showing short url after testing
-        //tvShortUrl.setText(linkPair.getShortUrl());
-        tvShortUrl.setText(Long.toString(linkPair.getId()));
+        tvShortUrl.setText(linkPair.getId() + ":" + linkPair.getStatusOrShortUrl());
         tvDate.setText(linkPair.getPrintableDate());
         return rowView;
     }

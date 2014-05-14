@@ -12,12 +12,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 import com.indivisible.shortie.data.LinkDataSource;
 import com.indivisible.shortie.data.LinkPair;
 import com.indivisible.shortie.data.LinkPairListAdapter;
 
 
+/**
+ * Fragment for displaying and interacting with LinkPairs.
+ * 
+ * @author indiv
+ */
 public class LinkPairListFragment
         extends ListFragment
         implements OnItemLongClickListener
@@ -31,7 +35,7 @@ public class LinkPairListFragment
     private LinkPairListAdapter adapter;
     private OnLinkPairClickListener clickListener;
 
-    private static final String TAG = "LinksListFrag";
+    private static final String TAG = "sho:LinkListFrag";
 
 
     ///////////////////////////////////////////////////////
@@ -60,19 +64,19 @@ public class LinkPairListFragment
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(android.R.layout.list_content, container, false);
-        //this.getListView().setStackFromBottom(true);
         adapter = new LinkPairListAdapter(getActivity(), this.getAllLinkPairs());
         setListAdapter(adapter);
         return view;
     }
 
-    public interface OnLinkPairClickListener
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState)
     {
-
-        public void onLinkShortClick(LinkPair linkPair);
-
-        public void onLinkLongClick(LinkPair linkPair);
-
+        //TODO: Fill from bottom and ensure correct ordering
+        super.onActivityCreated(savedInstanceState);
+        getListView().setLongClickable(true);
+        getListView().setOnItemLongClickListener(this);
+        getListView().setStackFromBottom(true);
     }
 
 
@@ -80,23 +84,46 @@ public class LinkPairListFragment
     ////    click handling
     ///////////////////////////////////////////////////////
 
+    /**
+     * Listener for list item short and long clicks.
+     * 
+     * @author indiv
+     */
+    public interface OnLinkPairClickListener
+    {
+
+        /**
+         * Called when User short clicks provided LinkPair entry.
+         * 
+         * @param linkPair
+         */
+        public void onLinkShortClick(LinkPair linkPair);
+
+        /**
+         * Called when User long clicks provided LinkPair entry.
+         * 
+         * @param linkPair
+         */
+        public void onLinkLongClick(LinkPair linkPair);
+    }
+
     @Override
     public void onListItemClick(ListView l, View v, int position, long id)
     {
-        Toast.makeText(getActivity(),
-                       "List item clicked, pos: " + position,
-                       Toast.LENGTH_SHORT).show();
-        clickListener.onLinkShortClick(adapter.getItem(position));
+        Log.v(TAG, "Short click, pos: " + position);
+        LinkPair linkPair = adapter.getItem(position);
+        Log.v(TAG, linkPair.getId() + ":" + linkPair.getLongUrl());
+        clickListener.onLinkShortClick(linkPair);
     }
 
     @Override
     public boolean
             onItemLongClick(AdapterView<?> parent, View view, int position, long id)
     {
-        Toast.makeText(getActivity(),
-                       "List item long clicked, pos: " + position,
-                       Toast.LENGTH_SHORT).show();
-        clickListener.onLinkLongClick(adapter.getItem(position));
+        Log.v(TAG, "Long click, pos: " + position);
+        LinkPair linkPair = adapter.getItem(position);
+        Log.v(TAG, linkPair.getId() + ":" + linkPair.getLongUrl());
+        clickListener.onLinkLongClick(linkPair);
         return true;
     }
 
@@ -104,6 +131,12 @@ public class LinkPairListFragment
     ////    link pair handling
     ///////////////////////////////////////////////////////
 
+    /**
+     * Get all LinkPairs from the database. <br/>
+     * TODO: Limit the number of entries returned.
+     * 
+     * @return
+     */
     private List<LinkPair> getAllLinkPairs()
     {
         try
@@ -122,6 +155,11 @@ public class LinkPairListFragment
         }
     }
 
+    /**
+     * Add a new LinkPair to the database and List Adapter.
+     * 
+     * @param linkPair
+     */
     public void addLinkPair(LinkPair linkPair)
     {
         try
@@ -129,7 +167,8 @@ public class LinkPairListFragment
             linkSource.openWritable();
             LinkPair newLinkPair = linkSource.createLinkPair(linkPair.getCreatedMillis(),
                                                              linkPair.getShortUrl(),
-                                                             linkPair.getLongUrl());
+                                                             linkPair.getLongUrl(),
+                                                             linkPair.getStatus());
             adapter.add(newLinkPair);
             adapter.notifyDataSetChanged();
         }
@@ -143,14 +182,23 @@ public class LinkPairListFragment
         }
     }
 
+    /**
+     * Remove a LinkPair form the database and List Adapter.
+     * 
+     * @param rmLinkPair
+     * @return
+     */
     public boolean removeLinkPair(LinkPair rmLinkPair)
     {
-        //TODO: test if removing from list will update adapter
         try
         {
             linkSource.openWritable();
             boolean rmSuccess = linkSource.deleteLinkPair(rmLinkPair.getId());
-            if (rmSuccess) adapter.remove(rmLinkPair);
+            if (rmSuccess)
+            {
+                adapter.remove(rmLinkPair);
+                adapter.notifyDataSetChanged();
+            }
             return rmSuccess;
         }
         catch (SQLException e)
@@ -162,5 +210,8 @@ public class LinkPairListFragment
             linkSource.close();
         }
     }
+
+    //TODO: public boolean updateLinkPair(LinkPair linkPair)
+    //      must have an id set, else return false;
 
 }
