@@ -27,8 +27,7 @@ public class GoogleShortener
     ///////////////////////////////////////////////////////
 
     private final static String GOOGLE_URL = "https://www.googleapis.com/urlshortener/v1/url";
-    //private final static String API_KEY = "AIzaSyAWCd8ONumLwxv0RqthcHXjcD1OlhXgrlE";
-    private final static String API_KEY = "AIzaSyAWCd8ONumLwxv0RqthcHXjcD1OlhXgrlEaaaaaaaaaaaaaaaaa";
+    private final static String API_KEY = "AIzaSyAWCd8ONumLwxv0RqthcHXjcD1OlhXgrlE";
 
     private final static String CONTENT_TYPE = "application/json";
     private final static String KEY_APIKEY = "key";

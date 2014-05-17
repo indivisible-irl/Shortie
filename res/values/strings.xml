@@ -3,7 +3,6 @@
 
     <!-- application -->
     <string name="app_name">Shortie</string>
-    <string name="action_settings">Settings</string>
 
     <!-- input -->
     <string name="et_longurl_hint">Enter long URL here</string>
@@ -17,5 +16,16 @@
     <string name="tvLinkLongUrl">[Expanded URL here]</string>
     <string name="tvLinkShortUrl">[Short URL here]</string>
     <string name="tvLinkDate">[Date here]</string>
+    
+    <!-- actions (menu bar) -->
+    <string name="action_prefs">Preferences</string>
+    <string name="action_info">Info</string>
+    <string name="action_normal">Normal Mode</string>
+    <string name="action_edit">Edit Mode</string>
+    <string name="action_delete">Delete Mode</string>
+    <string name="action_search">Search Mode</string>
+    
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
 
 </resources>
