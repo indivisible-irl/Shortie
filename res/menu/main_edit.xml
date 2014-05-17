@@ -8,9 +8,9 @@
         shortie:showAsAction="always"
     />
     <item
-        android:id="@+id/action_normal"
+        android:id="@+id/action_input"
         android:icon="@android:drawable/ic_menu_add"
-        android:title="@string/action_normal"
+        android:title="@string/action_input"
         shortie:showAsAction="ifRoom"
     />
     <item

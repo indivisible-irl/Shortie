@@ -20,10 +20,10 @@
     <!-- actions (menu bar) -->
     <string name="action_prefs">Preferences</string>
     <string name="action_info">Info</string>
-    <string name="action_normal">Normal Mode</string>
-    <string name="action_edit">Edit Mode</string>
-    <string name="action_delete">Delete Mode</string>
-    <string name="action_search">Search Mode</string>
+    <string name="action_input">Input</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_search">Search</string>
     
     <string name="action_save">Save</string>
     <string name="action_cancel">Cancel</string>

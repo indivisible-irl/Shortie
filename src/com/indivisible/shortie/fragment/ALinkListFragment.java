@@ -6,34 +6,29 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ListView;
 import com.indivisible.shortie.data.LinkDataSource;
 import com.indivisible.shortie.data.LinkPair;
 import com.indivisible.shortie.data.LinkPairListAdapter;
 
 
 /**
- * Fragment for displaying and interacting with LinkPairs.
+ * Parent class for ListFragments displaying and managing LinkPairs
  * 
  * @author indiv
  */
-public class LinkPairListFragment
+public abstract class ALinkListFragment
         extends ListFragment
-        implements OnItemLongClickListener
+        implements OnItemLongClickListener      // OnItemClick is native
 {
 
     ///////////////////////////////////////////////////////
     ////    data
     ///////////////////////////////////////////////////////
 
-    private LinkDataSource linkSource;
-    private LinkPairListAdapter adapter;
-    private OnLinkPairClickListener clickListener;
+    protected LinkDataSource linkSource;
+    protected OnLinkPairClickListener clickListener;
+    protected LinkPairListAdapter adapter;
 
     private static final String TAG = "sho:LinkListFrag";
 
@@ -41,6 +36,12 @@ public class LinkPairListFragment
     ///////////////////////////////////////////////////////
     ////    init
     ///////////////////////////////////////////////////////
+
+    /**
+     * Parent class for ListFragments displaying and managing LinkPairs
+     */
+    protected ALinkListFragment()
+    {}
 
     @Override
     public void onAttach(Activity activity)
@@ -59,30 +60,14 @@ public class LinkPairListFragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState)
-    {
-        View view = inflater.inflate(android.R.layout.list_content, container, false);
-        adapter = new LinkPairListAdapter(getActivity(), this.getAllLinkPairs());
-        setListAdapter(adapter);
-        return view;
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
-        //TODO: Fill from bottom and ensure correct ordering
         super.onActivityCreated(savedInstanceState);
         getListView().setLongClickable(true);
         getListView().setOnItemLongClickListener(this);
+        //ASK: Always stack from bottom?
         getListView().setStackFromBottom(true);
     }
-
-
-    ///////////////////////////////////////////////////////
-    ////    click handling
-    ///////////////////////////////////////////////////////
 
     /**
      * Listener for list item short and long clicks.
@@ -107,25 +92,6 @@ public class LinkPairListFragment
         public void onLinkLongClick(LinkPair linkPair);
     }
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id)
-    {
-        Log.v(TAG, "Short click, pos: " + position);
-        LinkPair linkPair = adapter.getItem(position);
-        Log.v(TAG, linkPair.getId() + ":" + linkPair.getLongUrl());
-        clickListener.onLinkShortClick(linkPair);
-    }
-
-    @Override
-    public boolean
-            onItemLongClick(AdapterView<?> parent, View view, int position, long id)
-    {
-        Log.v(TAG, "Long click, pos: " + position);
-        LinkPair linkPair = adapter.getItem(position);
-        Log.v(TAG, linkPair.getId() + ":" + linkPair.getLongUrl());
-        clickListener.onLinkLongClick(linkPair);
-        return true;
-    }
 
     ///////////////////////////////////////////////////////
     ////    link pair handling
@@ -137,7 +103,7 @@ public class LinkPairListFragment
      * 
      * @return
      */
-    private List<LinkPair> getAllLinkPairs()
+    public List<LinkPair> getAllLinkPairs()
     {
         try
         {
