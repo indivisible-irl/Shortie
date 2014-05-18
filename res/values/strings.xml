@@ -7,6 +7,8 @@
     <!-- input -->
     <string name="et_longurl_hint">Enter long URL here</string>
     <string name="b_shorten">Shorten</string>
+    <string name="et_search_hint">Search</string>
+    <string name="desc_search">Search</string>
 
     <!-- empty list -->
     <string name="tvEmptyTitle">No Saved Links</string>
@@ -27,5 +29,14 @@
     
     <string name="action_save">Save</string>
     <string name="action_cancel">Cancel</string>
+    
+    <!-- Spinners -->
+    <string name="prompt_shorteners">Select a Shortener</string>
+    <string-array name="array_shorts_no_default">
+        <item>Google</item>
+        <item>Google</item>
+        <item>Google</item>
+        <item>Google</item>
+    </string-array>
 
 </resources>

@@ -30,7 +30,7 @@ public abstract class ALinkListFragment
     protected OnLinkPairClickListener clickListener;
     protected LinkPairListAdapter adapter;
 
-    private static final String TAG = "sho:LinkListFrag";
+    private static final String TAG = "sho:ALinkListFrag";
 
 
     ///////////////////////////////////////////////////////
@@ -68,6 +68,11 @@ public abstract class ALinkListFragment
         //ASK: Always stack from bottom?
         getListView().setStackFromBottom(true);
     }
+
+
+    ///////////////////////////////////////////////////////
+    ////    listener
+    ///////////////////////////////////////////////////////
 
     /**
      * Listener for list item short and long clicks.

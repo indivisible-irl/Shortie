@@ -25,7 +25,7 @@ public class LinkListInput
     ////    data
     ///////////////////////////////////////////////////////
 
-    private static final String TAG = "sho:LinkListFrag";
+    private static final String TAG = "sho:LinkListInput";
 
 
     ///////////////////////////////////////////////////////

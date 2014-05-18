@@ -1,6 +1,8 @@
 package com.indivisible.shortie.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -8,10 +10,15 @@ import android.view.MenuItem;
 import com.indivisible.shortie.R;
 import com.indivisible.shortie.actions.ShortenTask;
 import com.indivisible.shortie.data.LinkPair;
-import com.indivisible.shortie.fragment.LinkInputFragment.OnInputListener;
+import com.indivisible.shortie.fragment.AInputFragment;
+import com.indivisible.shortie.fragment.AInputFragment.OnInputListener;
+import com.indivisible.shortie.fragment.ALinkListFragment;
 import com.indivisible.shortie.fragment.ALinkListFragment.OnLinkPairClickListener;
+import com.indivisible.shortie.fragment.ASpinnerFragment;
+import com.indivisible.shortie.fragment.InputSubmit;
 import com.indivisible.shortie.fragment.LinkListInput;
 import com.indivisible.shortie.fragment.ShortenActivityMode;
+import com.indivisible.shortie.fragment.SpinnerServices;
 
 /**
  * Activity to manually shorten URLs and reuse old ones.
@@ -27,8 +34,11 @@ public class ShortenActivity
     ////    data
     ///////////////////////////////////////////////////////
 
-    private LinkListInput listFragment;
-    private ShortenActivityMode activityMode = ShortenActivityMode.INPUT;   //TODO: allow for user default pref
+    private ASpinnerFragment spinnerFragment;
+    private ALinkListFragment listFragment;
+    private AInputFragment inputFragment;
+    //TODO: allow for user default pref
+    private ShortenActivityMode activityMode = ShortenActivityMode.INPUT;
     private static final String TAG = "sho:ShortenAct";
 
 
@@ -41,13 +51,26 @@ public class ShortenActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shorten);
-        listFragment = (LinkListInput) getSupportFragmentManager()
-                .findFragmentById(R.id.frLinksList);
+        if (savedInstanceState == null)
+        {
+            loadMode();
+        }
     }
 
     private void loadMode()
     {
+        Log.d(TAG, "load: start loading fragments");
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
+        Log.d(TAG, "load: start queuing fragments");
+        setSpinnerFragment(fragmentTransaction);
+        setListViewFragment(fragmentTransaction);
+        setInputFragment(fragmentTransaction);
+        Log.d(TAG, "load: finish queuing fragments, commit...");
+
+        fragmentTransaction.commit();
+        Log.d(TAG, "load: finish loading fragments");
     }
 
     private void setMode(ShortenActivityMode mode)
@@ -55,6 +78,29 @@ public class ShortenActivity
         this.activityMode = mode;
         this.invalidateOptionsMenu();
         loadMode();
+    }
+
+
+    ///////////////////////////////////////////////////////
+    ////    swap fragments / change modes
+    ///////////////////////////////////////////////////////
+
+    private void setSpinnerFragment(FragmentTransaction fragmentTransaction)
+    {
+        spinnerFragment = new SpinnerServices();
+        fragmentTransaction.replace(R.id.frSpinner, spinnerFragment);
+    }
+
+    private void setListViewFragment(FragmentTransaction fragmentTransaction)
+    {
+        listFragment = new LinkListInput();
+        fragmentTransaction.replace(R.id.frList, listFragment);
+    }
+
+    private void setInputFragment(FragmentTransaction fragmentTransaction)
+    {
+        inputFragment = new InputSubmit();
+        fragmentTransaction.replace(R.id.frInput, inputFragment);
     }
 
 
@@ -69,15 +115,20 @@ public class ShortenActivity
         {
             case INPUT:
                 getMenuInflater().inflate(R.menu.main_input, menu);
+                setMode(ShortenActivityMode.INPUT);
                 return true;
             case EDIT:
                 getMenuInflater().inflate(R.menu.main_edit, menu);
+                setMode(ShortenActivityMode.EDIT);
                 return true;
             case DELETE:
                 getMenuInflater().inflate(R.menu.main_delete, menu);
+                setMode(ShortenActivityMode.DELETE);
                 return true;
             case SEARCH:
                 getMenuInflater().inflate(R.menu.main_search, menu);
+                setMode(ShortenActivityMode.SEARCH);
+                return true;
             default:
                 Log.e(TAG, "Did not handle Mode: " + this.activityMode.name());
                 return false;
@@ -118,7 +169,7 @@ public class ShortenActivity
     ///////////////////////////////////////////////////////
 
     //-------------------------------//
-    // listener InputFragment
+    // listener input fragments
     //-------------------------------//
 
     @Override
@@ -131,8 +182,20 @@ public class ShortenActivity
         shortenLink(this.listFragment, newLinkPair);
     }
 
+    @Override
+    public void onDeleteConfirm()
+    {}
+
+    @Override
+    public void onDeleteCancel()
+    {}
+
+    @Override
+    public void onSearchTermChanged(String searchTerm)
+    {}
+
     //-------------------------------//
-    // listener LinkPairListFragment
+    // listener list fragments
     //-------------------------------//
 
     @Override
@@ -149,25 +212,11 @@ public class ShortenActivity
         listFragment.removeLinkPair(linkPair);
     }
 
+    //-------------------------------//
+    // listener spinner fragments
+    //-------------------------------//
 
-    ///////////////////////////////////////////////////////
-    ////    swap fragments / change modes
-    ///////////////////////////////////////////////////////
-
-    private boolean setSpinnerFragment()
-    {
-        return false;
-    }
-
-    private boolean setListViewFragment()
-    {
-        return false;
-    }
-
-    private boolean setInputFragment()
-    {
-        return false;
-    }
+    //TODO: spinner fragments.
 
 
     ///////////////////////////////////////////////////////
@@ -176,8 +225,7 @@ public class ShortenActivity
 
     //TODO: New spinner/preference fragment to select Shortener service (use icons too)
 
-    private void
-            shortenLink(LinkListInput listPairListFragment, LinkPair linkPair)
+    private void shortenLink(ALinkListFragment listPairListFragment, LinkPair linkPair)
     {
         //return linkPair;
         ShortenTask shortenTask = new ShortenTask(listPairListFragment, linkPair);

@@ -2,11 +2,9 @@ package com.indivisible.shortie.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,9 +17,8 @@ import com.indivisible.shortie.R;
  * 
  * @author indiv
  */
-public class LinkInputFragment
-        extends Fragment
-        implements OnClickListener
+public class InputSubmit
+        extends AInputFragment
 {
 
     ///////////////////////////////////////////////////////
@@ -30,7 +27,6 @@ public class LinkInputFragment
 
     private EditText etLongUrl;
     private Button bShorten;
-    private OnInputListener inputListener;
 
     private static final String TAG = "sho:LinkInputFrag";
 
@@ -44,7 +40,7 @@ public class LinkInputFragment
                              ViewGroup container,
                              Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_input, container, false);
+        View view = inflater.inflate(R.layout.fragment_input_submit, container, false);
         etLongUrl = (EditText) view.findViewById(R.id.etLongUrl);
         bShorten = (Button) view.findViewById(R.id.bShorten);
         bShorten.setOnClickListener(this);
@@ -55,45 +51,18 @@ public class LinkInputFragment
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
-        try
-        {
-            inputListener = (OnInputListener) activity;
-        }
-        catch (ClassCastException e)
-        {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnInputListener");
-        }
     }
 
     @Override
     public void onDetach()
     {
         super.onDetach();
-        inputListener = null;
     }
 
 
     ///////////////////////////////////////////////////////
     ////    input
     ///////////////////////////////////////////////////////
-
-    /**
-     * Listener for LinkInputFragment submissions.
-     * 
-     * @author indiv
-     */
-    public interface OnInputListener
-    {
-
-        /**
-         * Call on Submit button press to pass EditText's text.
-         * 
-         * @param urlLong
-         */
-        public void onShortenSubmit(String urlLong);
-    }
-
 
     @Override
     public void onClick(View v)

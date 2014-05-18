@@ -1,19 +1,30 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <fragment
-        android:id="@+id/frLinksList"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:name="com.indivisible.shortie.fragment.LinkListInput"/>
-    <fragment 
-        android:id="@+id/frLinkInput"
+    <FrameLayout
+        android:id="@+id/frInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="com.indivisible.shortie.fragment.LinkInputFragment"/>
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        tools:layout="@layout/fragment_input_submit" />
 
-</LinearLayout>
+    <FrameLayout
+        android:id="@+id/frSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        tools:layout="@layout/fragment_spinner" />
+    
+    <FrameLayout
+        android:id="@+id/frList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_above="@+id/frInput"
+        android:layout_below="@id/frSpinner"
+        tools:layout="@layout/fragment_links_empty" />
+
+</RelativeLayout>
