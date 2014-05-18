@@ -1,6 +1,17 @@
 package com.indivisible.shortie.fragment;
 
-
+/**
+ * Enum to control Fragments loaded for main Activity.<br/>
+ * <ul>
+ * <li><strong>INPUT</strong> - Default mode: list links, manual input of new</li>
+ * <li><strong>EDIT</strong> - Edit mode: edit existing links</li>
+ * <li><strong>DELETE</strong> - Delete mode: batch remove existing links</li>
+ * <li><strong>SEARCH</strong> - Search mode: Filter existing links by Service
+ * and text</li>
+ * </ul>
+ * 
+ * @author indiv
+ */
 public enum ShortenActivityMode
 {
     INPUT,      //  SubmitInput, default
