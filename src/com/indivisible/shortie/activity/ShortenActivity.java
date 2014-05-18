@@ -15,6 +15,7 @@ import com.indivisible.shortie.fragment.AInputFragment.OnInputListener;
 import com.indivisible.shortie.fragment.ALinkListFragment;
 import com.indivisible.shortie.fragment.ALinkListFragment.OnLinkPairClickListener;
 import com.indivisible.shortie.fragment.ASpinnerFragment;
+import com.indivisible.shortie.fragment.ASpinnerFragment.OnSpinnerChangeListener;
 import com.indivisible.shortie.fragment.InputSubmit;
 import com.indivisible.shortie.fragment.LinkListInput;
 import com.indivisible.shortie.fragment.ShortenActivityMode;
@@ -27,7 +28,7 @@ import com.indivisible.shortie.fragment.SpinnerServices;
  */
 public class ShortenActivity
         extends ActionBarActivity
-        implements OnInputListener, OnLinkPairClickListener
+        implements OnInputListener, OnLinkPairClickListener, OnSpinnerChangeListener
 {
 
     ///////////////////////////////////////////////////////
@@ -216,7 +217,11 @@ public class ShortenActivity
     // listener spinner fragments
     //-------------------------------//
 
-    //TODO: spinner fragments.
+    @Override
+    public void onSpinnerChange(String selectedItem)
+    {
+        Log.v(TAG, "New spinner item selected: " + selectedItem);
+    }
 
 
     ///////////////////////////////////////////////////////

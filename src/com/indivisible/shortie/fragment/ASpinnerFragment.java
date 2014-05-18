@@ -3,6 +3,7 @@ package com.indivisible.shortie.fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.widget.Spinner;
 import com.indivisible.shortie.service.GoogleShortener;
 import com.indivisible.shortie.service.Shortener;
@@ -17,6 +18,7 @@ public abstract class ASpinnerFragment
     ///////////////////////////////////////////////////////
 
     protected Spinner spinner;
+    protected OnSpinnerChangeListener spinnerChangeListener;
     protected Shortener[] shortenerServices = new Shortener[] {
             new GoogleShortener(), new GoogleShortener()
     };
@@ -31,13 +33,33 @@ public abstract class ASpinnerFragment
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
-        // no need for a listener
+        try
+        {
+            spinnerChangeListener = (OnSpinnerChangeListener) activity;
+        }
+        catch (ClassCastException e)
+        {
+            Log.e(TAG, "Parent Activity deosn't implement 'OnSpinnerChangeListener'");
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnInputListener");
+        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
+    }
+
+
+    ///////////////////////////////////////////////////////
+    ////    listener
+    ///////////////////////////////////////////////////////
+
+    public interface OnSpinnerChangeListener
+    {
+
+        public void onSpinnerChange(String selectedItem);
     }
 
 }
