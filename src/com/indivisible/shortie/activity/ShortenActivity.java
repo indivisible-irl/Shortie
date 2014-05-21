@@ -2,6 +2,7 @@ package com.indivisible.shortie.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -16,6 +17,8 @@ import com.indivisible.shortie.fragment.ALinkListFragment;
 import com.indivisible.shortie.fragment.ALinkListFragment.OnLinkPairClickListener;
 import com.indivisible.shortie.fragment.ASpinnerFragment;
 import com.indivisible.shortie.fragment.ASpinnerFragment.OnSpinnerChangeListener;
+import com.indivisible.shortie.fragment.InputDelete;
+import com.indivisible.shortie.fragment.InputSearch;
 import com.indivisible.shortie.fragment.InputSubmit;
 import com.indivisible.shortie.fragment.LinkListInput;
 import com.indivisible.shortie.fragment.ShortenActivityMode;
@@ -28,18 +31,26 @@ import com.indivisible.shortie.fragment.SpinnerServices;
  */
 public class ShortenActivity
         extends ActionBarActivity
-        implements OnInputListener, OnLinkPairClickListener, OnSpinnerChangeListener
+        implements OnInputListener, OnLinkPairClickListener, OnSpinnerChangeListener,
+        OnBackStackChangedListener
 {
 
     ///////////////////////////////////////////////////////
     ////    data
     ///////////////////////////////////////////////////////
 
-    private ASpinnerFragment spinnerFragment;
-    private ALinkListFragment listFragment;
-    private AInputFragment inputFragment;
-    //TODO: allow for user default pref
-    private ShortenActivityMode activityMode = ShortenActivityMode.INPUT;
+    private ASpinnerFragment spinner;
+    private ALinkListFragment list;
+    private AInputFragment input;
+
+    private ShortenActivityMode activityMode;
+    private boolean firstLoad = true;
+
+    private static final String TAG_SPINNER = "spinner";
+    private static final String TAG_LIST = "list";
+    private static final String TAG_INPUT = "input";
+    private static final String TOP_STACK = "top";
+
     private static final String TAG = "sho:ShortenAct";
 
 
@@ -52,33 +63,18 @@ public class ShortenActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shorten);
+
         if (savedInstanceState == null)
         {
+            Log.w(TAG, "SavedInstance state: NULL");
+            this.activityMode = ShortenActivityMode.INPUT;
+            this.firstLoad = true;
             loadMode();
         }
-    }
-
-    private void loadMode()
-    {
-        Log.d(TAG, "load: start loading fragments");
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        Log.d(TAG, "load: start queuing fragments");
-        setSpinnerFragment(fragmentTransaction);
-        setListViewFragment(fragmentTransaction);
-        setInputFragment(fragmentTransaction);
-        Log.d(TAG, "load: finish queuing fragments, commit...");
-
-        fragmentTransaction.commit();
-        Log.d(TAG, "load: finish loading fragments");
-    }
-
-    private void setMode(ShortenActivityMode mode)
-    {
-        this.activityMode = mode;
-        this.invalidateOptionsMenu();
-        loadMode();
+        else
+        {
+            Log.w(TAG, "SavedInstance state: NOT NULL");
+        }
     }
 
 
@@ -86,22 +82,88 @@ public class ShortenActivity
     ////    swap fragments / change modes
     ///////////////////////////////////////////////////////
 
-    private void setSpinnerFragment(FragmentTransaction fragmentTransaction)
+    private void setMode(ShortenActivityMode mode)
     {
-        spinnerFragment = new SpinnerServices();
-        fragmentTransaction.replace(R.id.frSpinner, spinnerFragment);
+        Log.d(TAG, "Changing mode: " + mode.name());
+        this.activityMode = mode;
+        this.invalidateOptionsMenu();
+        loadMode();
     }
 
-    private void setListViewFragment(FragmentTransaction fragmentTransaction)
+    private void loadMode()
     {
-        listFragment = new LinkListInput();
-        fragmentTransaction.replace(R.id.frList, listFragment);
+        if (firstLoad)
+        {
+            firstLoad();
+            firstLoad = false;
+        }
+        else
+        {
+            subsequentLoad();
+        }
     }
 
-    private void setInputFragment(FragmentTransaction fragmentTransaction)
+    private void firstLoad()
     {
-        inputFragment = new InputSubmit();
-        fragmentTransaction.replace(R.id.frInput, inputFragment);
+        Log.d(TAG, "fresh load: start loading fragments");
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        setFragmentsByMode(fragmentManager, fragmentTransaction);
+        fragmentTransaction.addToBackStack(TOP_STACK);
+        fragmentTransaction.commit();
+        Log.d(TAG, "fresh load: finish loading fragments");
+    }
+
+    private void subsequentLoad()
+    {
+        Log.d(TAG, "load: start loading fragments");
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        setFragmentsByMode(fragmentManager, fragmentTransaction);
+        fragmentTransaction.commit();
+        Log.d(TAG, "load: finish loading fragments");
+    }
+
+    private void setFragmentsByMode(FragmentManager fm, FragmentTransaction ft)
+    {
+        switch (this.activityMode)
+        {
+            default:
+                Log.e(TAG, "Unhandled mode for InputFragment: " + this.activityMode.name());
+                Log.e(TAG, "Using default (INPUT)");
+            case INPUT:
+                if (fm.findFragmentByTag(TAG_SPINNER) != null) ft.remove(spinner);
+                spinner = null;
+                list = new LinkListInput();
+                input = new InputSubmit();
+                break;
+            case EDIT:
+                if (fm.findFragmentByTag(TAG_INPUT) != null) ft.remove(input);
+                spinner = new SpinnerServices();
+                list = new LinkListInput();
+                input = null;
+                break;
+            case DELETE:
+                spinner = new SpinnerServices();
+                list = new LinkListInput();
+                input = new InputDelete();
+                break;
+            case SEARCH:
+                spinner = new SpinnerServices();
+                list = new LinkListInput();
+                input = new InputSearch();
+                break;
+        }
+        if (spinner != null) ft.replace(R.id.frSpinner, spinner, TAG_SPINNER);
+        if (list != null) ft.replace(R.id.frList, list, TAG_LIST);
+        if (input != null) ft.replace(R.id.frInput, input, TAG_INPUT);
+    }
+
+    @Override
+    public void onBackStackChanged()
+    {
+        //TODO: implement onBackStackChanged()
+        Log.d(TAG, "BackStack changed");
     }
 
 
@@ -149,15 +211,19 @@ public class ShortenActivity
                 return true;
             case R.id.action_input:
                 Log.v(TAG, "ActionBar: Normal");
+                setMode(ShortenActivityMode.INPUT);
                 return true;
             case R.id.action_edit:
                 Log.v(TAG, "ActionBar: Edit");
+                setMode(ShortenActivityMode.EDIT);
                 return true;
             case R.id.action_delete:
                 Log.v(TAG, "ActionBar: Delete");
+                setMode(ShortenActivityMode.DELETE);
                 return true;
             case R.id.action_search:
                 Log.v(TAG, "ActionBar: Search");
+                setMode(ShortenActivityMode.SEARCH);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -180,7 +246,7 @@ public class ShortenActivity
         LinkPair newLinkPair = new LinkPair();
         newLinkPair.setCreatedMillis(System.currentTimeMillis());
         newLinkPair.setLongUrl(longUrl);
-        shortenLink(this.listFragment, newLinkPair);
+        shortenLink(this.list, newLinkPair);
     }
 
     @Override
@@ -210,7 +276,7 @@ public class ShortenActivity
     public void onLinkLongClick(LinkPair linkPair)
     {
         Log.d(TAG, "LinkPair long clicked, id: " + linkPair.getId());
-        listFragment.removeLinkPair(linkPair);
+        list.removeLinkPair(linkPair);
     }
 
     //-------------------------------//
