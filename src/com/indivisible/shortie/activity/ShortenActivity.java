@@ -46,10 +46,10 @@ public class ShortenActivity
     private ShortenActivityMode activityMode;
     private boolean firstLoad = true;
 
-    private static final String TAG_SPINNER = "spinner";
-    private static final String TAG_LIST = "list";
-    private static final String TAG_INPUT = "input";
-    private static final String TOP_STACK = "top";
+    private static final String SPINNER_TAG = "spinner";
+    private static final String LIST_TAG = "list";
+    private static final String INPUT_TAG = "input";
+    private static final String STACK_ROOT = "root";
 
     private static final String TAG = "sho:ShortenAct";
 
@@ -109,7 +109,7 @@ public class ShortenActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         setFragmentsByMode(fragmentManager, fragmentTransaction);
-        fragmentTransaction.addToBackStack(TOP_STACK);
+        fragmentTransaction.addToBackStack(STACK_ROOT);
         fragmentTransaction.commit();
         Log.d(TAG, "fresh load: finish loading fragments");
     }
@@ -132,13 +132,19 @@ public class ShortenActivity
                 Log.e(TAG, "Unhandled mode for InputFragment: " + this.activityMode.name());
                 Log.e(TAG, "Using default (INPUT)");
             case INPUT:
-                if (fm.findFragmentByTag(TAG_SPINNER) != null) ft.remove(spinner);
+                if (fm.findFragmentByTag(SPINNER_TAG) != null)
+                {
+                    ft.remove(spinner);
+                }
                 spinner = null;
                 list = new LinkListInput();
                 input = new InputSubmit();
                 break;
             case EDIT:
-                if (fm.findFragmentByTag(TAG_INPUT) != null) ft.remove(input);
+                if (fm.findFragmentByTag(INPUT_TAG) != null)
+                {
+                    ft.remove(input);
+                }
                 spinner = new SpinnerServices();
                 list = new LinkListInput();
                 input = null;
@@ -154,9 +160,18 @@ public class ShortenActivity
                 input = new InputSearch();
                 break;
         }
-        if (spinner != null) ft.replace(R.id.frSpinner, spinner, TAG_SPINNER);
-        if (list != null) ft.replace(R.id.frList, list, TAG_LIST);
-        if (input != null) ft.replace(R.id.frInput, input, TAG_INPUT);
+        if (spinner != null)
+        {
+            ft.replace(R.id.frSpinner, spinner, SPINNER_TAG);
+        }
+        if (list != null)
+        {
+            ft.replace(R.id.frList, list, LIST_TAG);
+        }
+        if (input != null)
+        {
+            ft.replace(R.id.frInput, input, INPUT_TAG);
+        }
     }
 
     @Override
