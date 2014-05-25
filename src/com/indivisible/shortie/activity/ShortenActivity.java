@@ -2,7 +2,6 @@ package com.indivisible.shortie.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -30,8 +29,7 @@ import com.indivisible.shortie.fragment.SpinnerServices;
  */
 public class ShortenActivity
         extends ActionBarActivity
-        implements OnInputListener, OnLinkPairClickListener, OnSpinnerChangeListener,
-        OnBackStackChangedListener
+        implements OnInputListener, OnLinkPairClickListener, OnSpinnerChangeListener //,        OnBackStackChangedListener
 {
 
     ///////////////////////////////////////////////////////
@@ -44,7 +42,7 @@ public class ShortenActivity
     private AInputFragment inputFragmentView;
     // edit fragment
     private ASpinnerFragment spinnerFragmentEdit;
-    private ALinkListFragment listFragmentEdit;     //ASK: reuse view's list? //ANS: No want edit icons in rows
+    private ALinkListFragment listFragmentEdit;
     // delete fragment
     private ASpinnerFragment spinnerFragmentDelete;
     private ALinkListFragment listFragmentDelete;
@@ -66,12 +64,12 @@ public class ShortenActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shorten);
-        getSupportFragmentManager().addOnBackStackChangedListener(this);
+        //getSupportFragmentManager().addOnBackStackChangedListener(this);
 
+        initFragments();
         if (savedInstanceState == null)
         {
             Log.w(TAG, "SAVEDINSTANCESTATE: NULL");
-            initFragments();
         }
         else
         {
@@ -113,7 +111,10 @@ public class ShortenActivity
     private void
             setFragments(ASpinnerFragment spinner, ALinkListFragment list, AInputFragment input)
     {
+        this.supportInvalidateOptionsMenu();
+
         FragmentManager fragmentManager = getSupportFragmentManager();
+
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         if (spinner != null)
         {
@@ -143,7 +144,8 @@ public class ShortenActivity
             catch (NullPointerException e)
             {}
         }
-        if (spinner != null)
+
+        if (input != null)
         {
             fragmentTransaction.replace(R.id.frInput, input);
         }
@@ -225,20 +227,20 @@ public class ShortenActivity
     }
 
 
-    @Override
-    public void onBackStackChanged()
-    {
-        // TODO Auto-generated method stub
-        Log.d(TAG, "BackStack changed");
-        if (this.activityMode.equals(ShortenActivityMode.VIEW))
-        {
-            finish();
-        }
-        else
-        {
-            loadViewState();
-        }
-    }
+    //    @Override
+    //    public void onBackStackChanged()
+    //    {
+    //        // TODO Auto-generated method stub
+    //        Log.d(TAG, "BackStack changed");
+    //        if (this.activityMode.equals(ShortenActivityMode.VIEW))
+    //        {
+    //            finish();
+    //        }
+    //        else
+    //        {
+    //            loadViewState();
+    //        }
+    //    }
 
 
     ///////////////////////////////////////////////////////
@@ -251,20 +253,16 @@ public class ShortenActivity
         switch (this.activityMode)
         {
             case VIEW:
-                getMenuInflater().inflate(R.menu.main_input, menu);
-                loadViewState();
+                getMenuInflater().inflate(R.menu.main_view, menu);
                 return true;
             case EDIT:
                 getMenuInflater().inflate(R.menu.main_edit, menu);
-                loadEditState();
                 return true;
             case DELETE:
                 getMenuInflater().inflate(R.menu.main_delete, menu);
-                loadDeleteState();
                 return true;
             case SEARCH:
                 getMenuInflater().inflate(R.menu.main_search, menu);
-                loadSearchState();
                 return true;
             default:
                 Log.e(TAG, "Did not handle Mode: " + this.activityMode.name());

@@ -105,7 +105,7 @@ public class LinkDataSource
         long pairId = db.insert(DbOpenHelper.TABLE_PAIRS, null, values);
         LinkPair newLinkPair = getLinkPairById(pairId);
         Log.v(TAG, "Added new LinkPair, id: " + pairId);
-        Log.v(TAG, "long: " + newLinkPair.getLongUrl());
+        Log.v(TAG, "longUrl: " + newLinkPair.getLongUrl());
         return newLinkPair;
     }
 
@@ -124,12 +124,12 @@ public class LinkDataSource
         try
         {
             cursor = db.query(DbOpenHelper.TABLE_PAIRS,
-                              DbOpenHelper.ALL_COLUMNS,
-                              DbOpenHelper.COL_KEY + " = " + id,
-                              null,
-                              null,
-                              null,
-                              null);
+                    DbOpenHelper.ALL_COLUMNS,
+                    DbOpenHelper.COL_KEY + " = " + id,
+                    null,
+                    null,
+                    null,
+                    null);
             if (cursor.getCount() == 1 && cursor.moveToFirst())
             {
                 LinkPair linkPair = CursorToLinkPair(cursor);
@@ -158,12 +158,12 @@ public class LinkDataSource
         try
         {
             cursor = db.query(DbOpenHelper.TABLE_PAIRS,
-                              DbOpenHelper.ALL_COLUMNS,
-                              null,
-                              null,
-                              null,
-                              null,
-                              DbOpenHelper.COL_DATETIME);
+                    DbOpenHelper.ALL_COLUMNS,
+                    null,
+                    null,
+                    null,
+                    null,
+                    DbOpenHelper.COL_DATETIME);
             if (cursor.moveToFirst())
             {
                 while (!cursor.isAfterLast())
@@ -196,8 +196,8 @@ public class LinkDataSource
         db.beginTransaction();
         try
         {
-            int rowsAffected = db.delete(DbOpenHelper.TABLE_PAIRS, DbOpenHelper.COL_KEY
-                    + " = " + id, null);
+            int rowsAffected = db.delete(DbOpenHelper.TABLE_PAIRS, DbOpenHelper.COL_KEY + " = "
+                    + id, null);
             if (rowsAffected == 1)
             {
                 db.setTransactionSuccessful();

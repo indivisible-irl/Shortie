@@ -32,10 +32,14 @@ public class LinkListInput
     ////    init
     ///////////////////////////////////////////////////////
 
+    public LinkListInput()
+    {}
+
     @Override
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
+        Log.v(TAG, "Attached LinkListInput fragment");
     }
 
     @Override
@@ -45,13 +49,13 @@ public class LinkListInput
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState)
+    public View
+            onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View view = inflater.inflate(android.R.layout.list_content, container, false);
         adapter = new LinkPairListAdapter(getActivity(), this.getAllLinkPairs());
         setListAdapter(adapter);
+        Log.d(TAG, "Number of list items: " + adapter.getCount());
         return view;
     }
 
@@ -71,8 +75,7 @@ public class LinkListInput
     }
 
     @Override
-    public boolean
-            onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
     {
         Log.v(TAG, "Long click, pos: " + position);
         LinkPair linkPair = adapter.getItem(position);

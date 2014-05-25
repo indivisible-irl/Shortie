@@ -40,17 +40,7 @@ public class LinkPairListAdapter
         TextView tvDate = (TextView) rowView.findViewById(R.id.tvLinkDate);
 
         LinkPair linkPair = linkPairs.get(position);
-        //        if (linkPair == null)
-        //        {
-        //            Log.d(TAG, "linkPair null, pos: " + position);
-        //        }
-        //        Log.v(TAG, "id:     " + linkPair.getId());
-        //        Log.v(TAG, "create: " + linkPair.getCreatedMillis());
-        //        Log.v(TAG, "status: " + linkPair.getStatus().name());
-        //        Log.v(TAG, "long:   " + linkPair.getLongUrl());
-        //        Log.v(TAG, "short:  " + linkPair.getShortUrl());
         tvLongUrl.setText(linkPair.getLongUrl());
-        //FIXME: revert back to showing short url after testing
         tvShortUrl.setText(linkPair.getId() + ":" + linkPair.getStatusOrShortUrl());
         tvDate.setText(linkPair.getPrintableDate());
         return rowView;

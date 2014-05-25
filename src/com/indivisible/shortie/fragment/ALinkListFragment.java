@@ -6,6 +6,8 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import com.indivisible.shortie.data.LinkDataSource;
 import com.indivisible.shortie.data.LinkPair;
@@ -69,10 +71,23 @@ public abstract class ALinkListFragment
         getListView().setStackFromBottom(true);
     }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        adapter.notifyDataSetInvalidated();
+    }
 
     ///////////////////////////////////////////////////////
     ////    listener
     ///////////////////////////////////////////////////////
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
     /**
      * Listener for list item short and long clicks.
@@ -137,9 +152,9 @@ public abstract class ALinkListFragment
         {
             linkSource.openWritable();
             LinkPair newLinkPair = linkSource.createLinkPair(linkPair.getCreatedMillis(),
-                                                             linkPair.getShortUrl(),
-                                                             linkPair.getLongUrl(),
-                                                             linkPair.getStatus());
+                    linkPair.getShortUrl(),
+                    linkPair.getLongUrl(),
+                    linkPair.getStatus());
             adapter.add(newLinkPair);
             adapter.notifyDataSetChanged();
         }
