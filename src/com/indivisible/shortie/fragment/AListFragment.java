@@ -19,7 +19,7 @@ import com.indivisible.shortie.data.LinkPairListAdapter;
  * 
  * @author indiv
  */
-public abstract class ALinkListFragment
+public abstract class AListFragment
         extends ListFragment
         implements OnItemLongClickListener      // OnItemClick is native
 {
@@ -42,7 +42,7 @@ public abstract class ALinkListFragment
     /**
      * Parent class for ListFragments displaying and managing LinkPairs
      */
-    protected ALinkListFragment()
+    protected AListFragment()
     {}
 
     @Override

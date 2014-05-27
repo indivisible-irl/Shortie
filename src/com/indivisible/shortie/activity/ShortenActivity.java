@@ -12,13 +12,13 @@ import com.indivisible.shortie.actions.ShortenTask;
 import com.indivisible.shortie.data.LinkPair;
 import com.indivisible.shortie.fragment.AInputFragment;
 import com.indivisible.shortie.fragment.AInputFragment.OnInputListener;
-import com.indivisible.shortie.fragment.ALinkListFragment;
-import com.indivisible.shortie.fragment.ALinkListFragment.OnLinkPairClickListener;
+import com.indivisible.shortie.fragment.AListFragment;
+import com.indivisible.shortie.fragment.AListFragment.OnLinkPairClickListener;
 import com.indivisible.shortie.fragment.ASpinnerFragment;
 import com.indivisible.shortie.fragment.ASpinnerFragment.OnSpinnerChangeListener;
 import com.indivisible.shortie.fragment.InputSearch;
 import com.indivisible.shortie.fragment.InputSubmit;
-import com.indivisible.shortie.fragment.LinkListInput;
+import com.indivisible.shortie.fragment.ListFragView;
 import com.indivisible.shortie.fragment.ShortenActivityMode;
 import com.indivisible.shortie.fragment.SpinnerServices;
 
@@ -29,7 +29,7 @@ import com.indivisible.shortie.fragment.SpinnerServices;
  */
 public class ShortenActivity
         extends ActionBarActivity
-        implements OnInputListener, OnLinkPairClickListener, OnSpinnerChangeListener //,        OnBackStackChangedListener
+        implements OnInputListener, OnLinkPairClickListener, OnSpinnerChangeListener
 {
 
     ///////////////////////////////////////////////////////
@@ -38,20 +38,22 @@ public class ShortenActivity
 
     // view fragment
     private ASpinnerFragment spinnerFragmentView;
-    private ALinkListFragment listFragmentView;
+    private AListFragment listFragmentView;
     private AInputFragment inputFragmentView;
     // edit fragment
     private ASpinnerFragment spinnerFragmentEdit;
-    private ALinkListFragment listFragmentEdit;
+    private AListFragment listFragmentEdit;
     // delete fragment
     private ASpinnerFragment spinnerFragmentDelete;
-    private ALinkListFragment listFragmentDelete;
+    private AListFragment listFragmentDelete;
     // search fragment
     private ASpinnerFragment spinnerFragmentSearch;
-    private ALinkListFragment listFragmentSearch;
+    private AListFragment listFragmentSearch;
     private AInputFragment inputFragmentSearch;
 
     private ShortenActivityMode activityMode;
+    private static final String TRANSACTION_TAG_ROOT = "root";
+    private static final String TRANSACTION_TAG_OTHER = "other";
     private static final String TAG = "sho:ShortenAct";
 
 
@@ -89,7 +91,7 @@ public class ShortenActivity
     {
         this.activityMode = ShortenActivityMode.VIEW;
         spinnerFragmentView = new SpinnerServices();
-        listFragmentView = new LinkListInput();
+        listFragmentView = new ListFragView();
         inputFragmentView = new InputSubmit();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -108,14 +110,32 @@ public class ShortenActivity
      * @param list
      * @param input
      */
-    private void
-            setFragments(ASpinnerFragment spinner, ALinkListFragment list, AInputFragment input)
+    private void setFragments(ASpinnerFragment spinner,
+                              AListFragment list,
+                              AInputFragment input,
+                              ShortenActivityMode previousMode)
     {
+        // refresh menu
         this.supportInvalidateOptionsMenu();
 
+        // get FragmentManager and pop to root
         FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.popBackStackImmediate(TRANSACTION_TAG_ROOT,
+                FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
+        // start transaction and add to stack
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if (previousMode == ShortenActivityMode.VIEW)
+        {
+            fragmentTransaction.addToBackStack(TRANSACTION_TAG_ROOT);
+        }
+        else
+        {
+            fragmentTransaction.addToBackStack(TRANSACTION_TAG_OTHER);
+        }
+
+
+        // replace and remove fragments as needed
         if (spinner != null)
         {
             fragmentTransaction.replace(R.id.frSpinner, spinner);
@@ -128,7 +148,9 @@ public class ShortenActivity
                         .findFragmentById(R.id.frSpinner));
             }
             catch (NullPointerException e)
-            {}
+            {
+                Log.w(TAG, "SpinnerFragment didn't exist for removal");
+            }
         }
         if (list != null)
         {
@@ -142,7 +164,9 @@ public class ShortenActivity
                         .findFragmentById(R.id.frList));
             }
             catch (NullPointerException e)
-            {}
+            {
+                Log.w(TAG, "ListFragment didn't exist for removal");
+            }
         }
 
         if (input != null)
@@ -157,13 +181,18 @@ public class ShortenActivity
                         .findFragmentById(R.id.frInput));
             }
             catch (NullPointerException e)
-            {}
+            {
+                Log.w(TAG, "InputFragment didn't exist for removal");
+            }
         }
+
+        // finish transaction
         fragmentTransaction.commit();
     }
 
     private void loadViewState()
     {
+        ShortenActivityMode prevMode = this.activityMode;
         this.activityMode = ShortenActivityMode.VIEW;
         if (spinnerFragmentView == null)
         {
@@ -171,17 +200,18 @@ public class ShortenActivity
         }
         if (listFragmentView == null)
         {
-            listFragmentView = new LinkListInput();
+            listFragmentView = new ListFragView();
         }
         if (inputFragmentView == null)
         {
             inputFragmentView = new InputSubmit();
         }
-        setFragments(spinnerFragmentView, listFragmentView, inputFragmentView);
+        setFragments(spinnerFragmentView, listFragmentView, inputFragmentView, prevMode);
     }
 
     private void loadEditState()
     {
+        ShortenActivityMode prevMode = this.activityMode;
         this.activityMode = ShortenActivityMode.EDIT;
         if (spinnerFragmentEdit == null)
         {
@@ -189,13 +219,14 @@ public class ShortenActivity
         }
         if (listFragmentEdit == null)
         {
-            listFragmentEdit = new LinkListInput();     //FIXME: edit icon list
+            listFragmentEdit = new ListFragView();     //FIXME: edit icon list
         }
-        setFragments(spinnerFragmentEdit, listFragmentEdit, null);
+        setFragments(spinnerFragmentEdit, listFragmentEdit, null, prevMode);
     }
 
     private void loadDeleteState()
     {
+        ShortenActivityMode prevMode = this.activityMode;
         this.activityMode = ShortenActivityMode.DELETE;
         if (spinnerFragmentDelete == null)
         {
@@ -203,13 +234,14 @@ public class ShortenActivity
         }
         if (listFragmentDelete == null)
         {
-            listFragmentDelete = new LinkListInput();   //FIXME: multi select list
+            listFragmentDelete = new ListFragView();   //FIXME: multi select list
         }
-        setFragments(spinnerFragmentDelete, listFragmentDelete, null);
+        setFragments(spinnerFragmentDelete, listFragmentDelete, null, prevMode);
     }
 
     private void loadSearchState()
     {
+        ShortenActivityMode prevMode = this.activityMode;
         this.activityMode = ShortenActivityMode.SEARCH;
         if (spinnerFragmentSearch == null)
         {
@@ -217,30 +249,14 @@ public class ShortenActivity
         }
         if (listFragmentSearch == null)
         {
-            listFragmentSearch = new LinkListInput();
+            listFragmentSearch = new ListFragView();
         }
         if (inputFragmentSearch == null)
         {
             inputFragmentSearch = new InputSearch();
         }
-        setFragments(spinnerFragmentSearch, listFragmentSearch, inputFragmentSearch);
+        setFragments(spinnerFragmentSearch, listFragmentSearch, inputFragmentSearch, prevMode);
     }
-
-
-    //    @Override
-    //    public void onBackStackChanged()
-    //    {
-    //        // TODO Auto-generated method stub
-    //        Log.d(TAG, "BackStack changed");
-    //        if (this.activityMode.equals(ShortenActivityMode.VIEW))
-    //        {
-    //            finish();
-    //        }
-    //        else
-    //        {
-    //            loadViewState();
-    //        }
-    //    }
 
 
     ///////////////////////////////////////////////////////
@@ -312,6 +328,8 @@ public class ShortenActivity
     // listener input fragments
     //-------------------------------//
 
+    // view
+
     @Override
     public void onShortenSubmit(String longUrl)
     {
@@ -322,6 +340,12 @@ public class ShortenActivity
         shortenLink(listFragmentView, newLinkPair);
     }
 
+    // edit
+
+    //TODO; edit interactions?
+
+    // delete
+
     @Override
     public void onDeleteConfirm()
     {}
@@ -329,6 +353,8 @@ public class ShortenActivity
     @Override
     public void onDeleteCancel()
     {}
+
+    // search
 
     @Override
     public void onSearchTermChanged(String searchTerm)
@@ -369,7 +395,7 @@ public class ShortenActivity
 
     //TODO: New spinner/preference fragment to select Shortener service (use icons too)
 
-    private void shortenLink(ALinkListFragment listPairListFragment, LinkPair linkPair)
+    private void shortenLink(AListFragment listPairListFragment, LinkPair linkPair)
     {
         //return linkPair;
         ShortenTask shortenTask = new ShortenTask(listPairListFragment, linkPair);

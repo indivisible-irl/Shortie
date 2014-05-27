@@ -17,8 +17,8 @@ import com.indivisible.shortie.data.LinkPairListAdapter;
  * 
  * @author indiv
  */
-public class LinkListInput
-        extends ALinkListFragment
+public class ListFragDelete
+        extends AListFragment
 {
 
     ///////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ public class LinkListInput
     ////    init
     ///////////////////////////////////////////////////////
 
-    public LinkListInput()
+    public ListFragDelete()
     {}
 
     @Override

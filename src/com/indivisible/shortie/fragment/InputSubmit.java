@@ -1,6 +1,5 @@
 package com.indivisible.shortie.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +26,7 @@ public class InputSubmit
 
     private EditText etLongUrl;
     private Button bShorten;
+    private String LONG_URL = "long_url";
 
     private static final String TAG = "sho:LinkInputFrag";
 
@@ -36,9 +36,8 @@ public class InputSubmit
     ///////////////////////////////////////////////////////
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState)
+    public View
+            onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_input_submit, container, false);
         etLongUrl = (EditText) view.findViewById(R.id.etLongUrl);
@@ -48,15 +47,20 @@ public class InputSubmit
     }
 
     @Override
-    public void onAttach(Activity activity)
+    public void onActivityCreated(Bundle savedInstanceState)
     {
-        super.onAttach(activity);
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null)
+        {
+            etLongUrl.setText(savedInstanceState.getString(LONG_URL, ""));
+        }
     }
 
     @Override
-    public void onDetach()
+    public void onSaveInstanceState(Bundle outState)
     {
-        super.onDetach();
+        super.onSaveInstanceState(outState);
+        outState.putString(LONG_URL, etLongUrl.getText().toString());
     }
 
 
@@ -78,36 +82,5 @@ public class InputSubmit
                 break;
         }
     }
-
-    //    public String validateUrl()
-    //    {
-    //        //TODO: Move validation to clipboard listener, allow any manual string. let shortener service decide.
-    //        String inputUrl = etLongUrl.getText().toString().trim();
-    //        URL url = null;
-    //        try
-    //        {
-    //            url = new URL(inputUrl);
-    //        }
-    //        catch (MalformedURLException e)
-    //        {
-    //            Log.w(TAG, "Failed to make URL");
-    //            e.printStackTrace();
-    //            return null;
-    //        }
-    //        URI uri = null;
-    //        try
-    //        {
-    //            uri = url.toURI();
-    //            return uri.toString();
-    //        }
-    //        catch (URISyntaxException e)
-    //        {
-    //            Log.w(TAG, "Failed to make URI");
-    //            e.printStackTrace();
-    //            return null;
-    //        }
-    //        //TODO: don't validate, just test connection and create short (two background threads)
-    //        //  inform on no connect, fail on no short.
-    //    }
 
 }

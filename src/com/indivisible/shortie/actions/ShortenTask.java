@@ -3,7 +3,7 @@ package com.indivisible.shortie.actions;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.indivisible.shortie.data.LinkPair;
-import com.indivisible.shortie.fragment.ALinkListFragment;
+import com.indivisible.shortie.fragment.AListFragment;
 import com.indivisible.shortie.service.GoogleShortener;
 import com.indivisible.shortie.service.ResponseStatus;
 import com.indivisible.shortie.service.Shortener;
@@ -23,7 +23,7 @@ public class ShortenTask
     ///////////////////////////////////////////////////////
 
     private LinkPair linkPair;
-    private ALinkListFragment listPairListFragment;
+    private AListFragment listPairListFragment;
     private static final String TAG = "sho:ShortTask";
 
 
@@ -31,7 +31,7 @@ public class ShortenTask
     ////    init
     ///////////////////////////////////////////////////////
 
-    public ShortenTask(ALinkListFragment listPairListFragment, LinkPair linkPair)
+    public ShortenTask(AListFragment listPairListFragment, LinkPair linkPair)
     {
         this.linkPair = linkPair;
         this.listPairListFragment = listPairListFragment;
